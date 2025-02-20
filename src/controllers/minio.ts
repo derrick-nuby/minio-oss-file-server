@@ -1,11 +1,11 @@
 // file located at src/controllers/minio.ts
 
 import { Response, Request } from "express";
-import { uploadFile as uploadFileService, uploadMultipleFiles as uploadMultipleFilesService, getFile as getFileService, deleteFile as deleteFileService } from "../services/file-handler.js";
+import { uploadFile, uploadMultipleFiles as uploadMultipleFilesService, getFile as getFileService, deleteFile as deleteFileService } from "../services/file-handler.js";
 
-const uploadFile = async (req: Request, res: Response): Promise<void> => {
+const uploadFileController = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { bucketName, objectName } = req.body;
+    const { bucketName } = req.body;
     const file = req.file;
 
     if (!file) {
@@ -13,12 +13,29 @@ const uploadFile = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    await uploadFileService(bucketName, objectName, file.buffer.toString('base64'));
-    res.status(200).json({ message: "File uploaded successfully" });
+    // Call the service function to upload the file
+    const objectName = await uploadFile(bucketName, file);
+
+    if (!objectName) {
+      res.status(500).json({ error: "Failed to upload file" });
+      return;
+    }
+
+    // Construct the file URL based on MinIO configuration
+    const fileURL = `${process.env.MINIO_ENDPOINT}/${bucketName}/${objectName}`;
+
+    res.status(200).json({
+      message: "File uploaded successfully",
+      fileName: objectName,
+      size: file.size,
+      url: fileURL
+    });
   } catch (error) {
-    res.status(500).json({ error });
+    console.error("Upload Error:", error);
+    res.status(500).json({ error: "Failed to upload file" });
   }
 };
+
 
 const uploadMultipleFiles = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -70,4 +87,4 @@ const deleteFile = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export { uploadFile, uploadMultipleFiles, listFiles, getFile, deleteFile };
+export { uploadFileController, uploadMultipleFiles, listFiles, getFile, deleteFile };

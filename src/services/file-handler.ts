@@ -49,15 +49,19 @@ export const uploadFile = async (
   file: Express.Multer.File,
   customName?: string,
   metadata?: Minio.ItemBucketMetadata
-): Promise<string> => {
+): Promise<string | null> => {
   try {
     const objectName = customName || file.originalname;
     const stream = Readable.from(file.buffer);
+
+    // Upload the file to MinIO
     await minioClient.putObject(bucketName, objectName, stream, file.size, metadata);
-    return `${bucketName}/${objectName}`;
+
+    // Return the object name to be used in the response URL
+    return objectName;
   } catch (error) {
-    handleMinioError(error as Error, `Failed to upload file ${file.originalname}`);
-    return "";
+    console.error(`Error uploading file ${file.originalname}:`, error);
+    return null;
   }
 };
 
