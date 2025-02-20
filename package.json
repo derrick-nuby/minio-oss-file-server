@@ -1,0 +1,41 @@
+{
+  "name": "minio-oss-file-server",
+  "version": "1.0.0",
+  "description": "MinIO is an object storage service that is compatible with Amazon S3. It allows you to store and retrieve files using an API similar to AWS S3. It is designed for high-performance and self-hosted deployments.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "devstart": "concurrently \"tsc -w\" \"nodemon dist/app.js\"",
+    "start": "node dist/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/derrick-nuby/minio-oss-file-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/derrick-nuby/minio-oss-file-server/issues"
+  },
+  "homepage": "https://github.com/derrick-nuby/minio-oss-file-server#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "concurrently": "^9.1.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "minio": "^8.0.4",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.9",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.12"
+  }
+}
