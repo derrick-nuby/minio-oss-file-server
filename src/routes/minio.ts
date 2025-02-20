@@ -2,7 +2,7 @@
 
 import { Router } from "express";
 import { uploadFile, uploadMultipleFiles, listFiles, getFile, deleteFile } from "../controllers/minio.js";
-import upload from "../middleware/minio.js";
+import upload from "../middleware/multer.js";
 
 const router: Router = Router();
 
