@@ -1,8 +1,7 @@
 // file located at src/controllers/minio.ts
 
 import { Response, Request } from "express";
-import minioClient from "../config/minio.js";
-import { Readable } from "stream";
+import { uploadFile as uploadFileService, uploadMultipleFiles as uploadMultipleFilesService, getFile as getFileService, deleteFile as deleteFileService } from "../services/file-handler.js";
 
 const uploadFile = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -14,10 +13,25 @@ const uploadFile = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const stream = Readable.from(file.buffer);
-    await minioClient.putObject(bucketName, objectName, stream, file.size);
-
+    await uploadFileService(bucketName, objectName, file.buffer.toString('base64'));
     res.status(200).json({ message: "File uploaded successfully" });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
+const uploadMultipleFiles = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { bucketName } = req.body;
+    const files = req.files as Express.Multer.File[];
+
+    if (!files || files.length === 0) {
+      res.status(400).json({ error: "No files uploaded" });
+      return;
+    }
+
+    await uploadMultipleFilesService(bucketName, files);
+    res.status(200).json({ message: "Files uploaded successfully" });
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -25,39 +39,18 @@ const uploadFile = async (req: Request, res: Response): Promise<void> => {
 
 const listFiles = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { bucketName } = req.params;
-
-    const objects = await minioClient.listObjects(bucketName, '', true);
-
-    const fileList: Array<{ name: string; size: number; lastModified: Date; }> = [];
-
-    // Collecting file details
-    objects.on('data', (obj) => {
-      fileList.push({
-        name: obj.name || '',
-        size: obj.size || 0,
-        lastModified: obj.lastModified || new Date(0),
-      });
-    });
-
-    objects.on('end', () => {
-      res.status(200).json({ files: fileList });
-    });
-
-    objects.on('error', (error) => {
-      res.status(500).json({ error: error.message });
-    });
-
+    // const { bucketName } = req.params;
+    // const fileList = await listFilesService(bucketName);
+    // res.status(200).json({ files: fileList });
   } catch (error) {
     res.status(500).json({ error });
   }
 };
 
-
 const getFile = async (req: Request, res: Response): Promise<void> => {
   try {
     const { bucketName, filename } = req.params;
-    const dataStream = await minioClient.getObject(bucketName, filename);
+    const dataStream = await getFileService(bucketName, filename);
 
     dataStream.pipe(res);
     dataStream.on("error", (error) => res.status(500).json({ error }));
@@ -69,7 +62,7 @@ const getFile = async (req: Request, res: Response): Promise<void> => {
 const deleteFile = async (req: Request, res: Response): Promise<void> => {
   try {
     const { bucketName, filename } = req.params;
-    await minioClient.removeObject(bucketName, filename);
+    await deleteFileService(bucketName, filename);
 
     res.status(200).json({ message: "File deleted successfully" });
   } catch (error) {
@@ -77,12 +70,4 @@ const deleteFile = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const helloWorld = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: "File uploaded successfully" });
-  } catch (error) {
-    res.status(500).json({ error });
-  }
-};
-
-export { uploadFile, listFiles, getFile, deleteFile, helloWorld };
+export { uploadFile, uploadMultipleFiles, listFiles, getFile, deleteFile };

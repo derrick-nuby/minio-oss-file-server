@@ -1,4 +1,4 @@
-// file located at src/routes/minio.ts
+// file located at src/config/minio.ts
 
 import * as Minio from "minio";
 import dotenv from 'dotenv';
