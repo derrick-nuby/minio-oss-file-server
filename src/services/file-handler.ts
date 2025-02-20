@@ -1,4 +1,4 @@
-import minioClient from "../config/minio";
+import minioClient from "../config/minio.js";
 import { Readable } from "stream";
 import * as Minio from 'minio';
 
