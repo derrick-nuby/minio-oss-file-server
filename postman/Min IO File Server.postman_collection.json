@@ -1,0 +1,384 @@
+{
+	"info": {
+		"_postman_id": "50a38b75-acd6-4c34-a719-b399693cbc94",
+		"name": "Min IO File Server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "24842410"
+	},
+	"item": [
+		{
+			"name": "File Management",
+			"item": [
+				{
+					"name": "Upload Single File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "bucketName",
+									"value": "testbucket",
+									"type": "text"
+								},
+								{
+									"key": "objectName",
+									"value": "derrick",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/iradu/Downloads/uploadtesting/MOU.pdf"
+								}
+							]
+						},
+						"url": "{{dev-url}}/minio/upload"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Multiple Files",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "bucketName",
+									"value": "testbucket",
+									"type": "text"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/iradu/Downloads/uploadtesting/MOU.pdf"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/iradu/Downloads/uploadtesting/Screenshot 2025-02-06 140353.png"
+								}
+							]
+						},
+						"url": "{{dev-url}}/minio/upload-multiple"
+					},
+					"response": []
+				},
+				{
+					"name": "Get File",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{dev-url}}/minio/file/testbucket/MOU.pdf"
+					},
+					"response": []
+				},
+				{
+					"name": "Get File URL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{dev-url}}/minio/file-url/testbucket/MOU.pdf"
+					},
+					"response": []
+				},
+				{
+					"name": "Check File Exists",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{dev-url}}/minio/file-exists/testbucket/MOU.pdf"
+					},
+					"response": []
+				},
+				{
+					"name": "Get File Metadata",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{dev-url}}/minio/file-metadata/testbucket/MOU.pdf"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\",\n\t\"fileName\": \"MOU.pdf\"\n}"
+						},
+						"url": "{{dev-url}}/minio/delete-file"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Multiple Files",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\",\n\t\"fileNames\": [\"MOU.pdf\", \"Screenshot 2025-02-06 140353.png\"]\n}"
+						},
+						"url": "{{dev-url}}/minio/delete-multiple-files"
+					},
+					"response": []
+				},
+				{
+					"name": "Rename File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\",\n\t\"oldFileName\": \"MOU.pdf\",\n\t\"newFileName\": \"MOU_renamed.pdf\"\n}"
+						},
+						"url": "{{dev-url}}/minio/rename-file"
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder handles all the file management operations."
+		},
+		{
+			"name": "Presigned URLs",
+			"item": [
+				{
+					"name": "Generate Presigned URL",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\",\n\t\"fileName\": \"MOU.pdf\",\n\t\"expiry\": 3600\n}"
+						},
+						"url": "{{dev-url}}/minio/presigned-url"
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Presigned Upload URL",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\",\n\t\"fileName\": \"MOU.pdf\",\n\t\"expiry\": 3600\n}"
+						},
+						"url": "{{dev-url}}/minio/presigned-upload-url"
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder handles all the presigned URL operations."
+		},
+		{
+			"name": "Bucket Versioning",
+			"item": [
+				{
+					"name": "Enable Bucket Versioning",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\"\n}"
+						},
+						"url": "{{dev-url}}/minio/versioning/enable"
+					},
+					"response": []
+				},
+				{
+					"name": "Disable Bucket Versioning",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\"\n}"
+						},
+						"url": "{{dev-url}}/minio/versioning/disable"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Bucket Versioning Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{dev-url}}/minio/versioning/status/testbucket"
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder handles all the bucket versioning operations."
+		},
+		{
+			"name": "Bucket Lifecycle",
+			"item": [
+				{
+					"name": "Set Bucket Lifecycle Policy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\",\n\t\"rules\": {}\n}"
+						},
+						"url": "{{dev-url}}/minio/lifecycle/set"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Bucket Lifecycle Policy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{dev-url}}/minio/lifecycle/get/testbucket"
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder handles all the bucket lifecycle operations."
+		},
+		{
+			"name": "Bucket Notifications",
+			"item": [
+				{
+					"name": "Set Bucket Notification",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\",\n\t\"events\": [\"s3:ObjectCreated:*\"],\n\t\"destination\": \"arn:aws:sns:us-east-1:123456789012:mytopic\"\n}"
+						},
+						"url": "{{dev-url}}/minio/notifications/set"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Bucket Notification",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{dev-url}}/minio/notifications/get/testbucket"
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder handles all the bucket notification operations."
+		},
+		{
+			"name": "File Operations",
+			"item": [
+				{
+					"name": "Copy File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"sourceBucket\": \"testbucket\",\n\t\"sourceFileName\": \"MOU.pdf\",\n\t\"destinationBucket\": \"testbucket\",\n\t\"destinationFileName\": \"MOU_copy.pdf\"\n}"
+						},
+						"url": "{{dev-url}}/minio/copy-file"
+					},
+					"response": []
+				},
+				{
+					"name": "Move File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"sourceBucket\": \"testbucket\",\n\t\"sourceFileName\": \"MOU.pdf\",\n\t\"destinationBucket\": \"testbucket\",\n\t\"destinationFileName\": \"MOU_moved.pdf\"\n}"
+						},
+						"url": "{{dev-url}}/minio/move-file"
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder handles all the file operations."
+		},
+		{
+			"name": "File Metadata",
+			"item": [
+				{
+					"name": "Set File Metadata",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\",\n\t\"fileName\": \"MOU.pdf\",\n\t\"metadata\": {\"key\": \"value\"},\n\t\"versionId\": \"\"\n}"
+						},
+						"url": "{{dev-url}}/minio/set-metadata"
+					},
+					"response": []
+				},
+				{
+					"name": "Get File Metadata",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{dev-url}}/minio/file-metadata/testbucket/MOU.pdf"
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder handles all the file metadata operations."
+		},
+		{
+			"name": "List Files",
+			"item": [
+				{
+					"name": "List Files in Bucket",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"bucketName\": \"testbucket\",\n\t\"prefix\": \"\",\n\t\"recursive\": true\n}"
+						},
+						"url": "{{dev-url}}/minio/list-files"
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder handles listing files in a bucket."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "dev-url",
+			"value": "http://localhost:3210/api/v1",
+			"type": "string"
+		}
+	]
+}
