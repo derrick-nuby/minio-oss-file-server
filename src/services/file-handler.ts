@@ -1,3 +1,5 @@
+// file located at src/services/file-handler.ts
+
 import minioClient from "../config/minio.js";
 import { Readable } from "stream";
 import * as Minio from 'minio';
@@ -86,6 +88,22 @@ export const uploadMultipleFiles = async (
   }
 };
 
+export const uploadFileFromPath = async (
+  bucketName: string,
+  filePath: string,
+  objectName?: string,
+  metadata?: Minio.ItemBucketMetadata
+): Promise<string> => {
+  try {
+    const objectNameFinal = objectName || filePath.split("/").pop() || "file";
+    await minioClient.fPutObject(bucketName, objectNameFinal, filePath, metadata);
+    return `${bucketName}/${objectNameFinal}`;
+  } catch (error) {
+    handleMinioError(error as Error, `Failed to upload file from path ${filePath}`);
+    return "";
+  }
+};
+
 // File Retrieval Functions
 export const getFile = async (bucketName: string, fileName: string): Promise<NodeJS.ReadableStream> => {
   try {
@@ -121,6 +139,15 @@ export const listFilesInBucket = async (
   } catch (error) {
     handleMinioError(error as Error, `Failed to list files in bucket ${bucketName}`);
     return [];
+  }
+};
+
+export const getFileURL = async (bucketName: string, fileName: string): Promise<string> => {
+  try {
+    return await minioClient.presignedUrl("GET", bucketName, fileName);
+  } catch (error) {
+    handleMinioError(error as Error, `Failed to generate URL for file ${fileName}`);
+    return "";
   }
 };
 
@@ -176,11 +203,12 @@ export const setFileMetadata = async (
   versionId?: string
 ): Promise<void> => {
   try {
-    // types to be fixed later
-    //     Expected 4 arguments, but got 3.ts(2554)
-    // client.d.ts(314, 72): An argument for 'putOpts' was not provided.
-    // (method) TypedClient.setObjectTagging(bucketName: string, objectName: string, tags: Tags, putOpts: TaggingOpts): Promise<void>
-    //     await minioClient.setObjectTagging(bucketName, fileName, metadata);
+    await minioClient.copyObject(bucketName, fileName, `${bucketName}/${fileName}`, {
+      // @ts-expect-error
+      metadataDirective: "REPLACE",
+      userMetadata: metadata,
+      versionId
+    });
   } catch (error) {
     handleMinioError(error as Error, `Failed to set metadata for file ${fileName}`);
   }
@@ -274,35 +302,6 @@ export const getBucketNotification = async (bucketName: string): Promise<Minio.N
   }
 };
 
-// File Upload from Path
-export const uploadFileFromPath = async (
-  bucketName: string,
-  filePath: string,
-  objectName?: string,
-  metadata?: Minio.ItemBucketMetadata
-): Promise<string> => {
-  try {
-    const objectNameFinal = objectName || filePath.split("/").pop() || "file";
-    await minioClient.fPutObject(bucketName, objectNameFinal, filePath, metadata);
-    return `${bucketName}/${objectNameFinal}`;
-  } catch (error) {
-    handleMinioError(error as Error, `Failed to upload file from path ${filePath}`);
-    return "";
-  }
-};
-
-
-// File Retrieval Functions
-export const getFileURL = async (bucketName: string, fileName: string): Promise<string> => {
-  try {
-    return await minioClient.presignedUrl("GET", bucketName, fileName);
-  } catch (error) {
-    handleMinioError(error as Error, `Failed to generate URL for file ${fileName}`);
-    return "";
-  }
-};
-
-
 // File Copy & Move Functions
 export const copyFile = async (
   sourceBucket: string,
@@ -352,7 +351,6 @@ export const statObject = async (
     throw error;
   }
 };
-
 
 // Export all functions
 export default {
